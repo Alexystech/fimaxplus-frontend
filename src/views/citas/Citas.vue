@@ -67,7 +67,7 @@
         <template #default>
           <el-form :label="formAgendarCita" :label-position="'top'">
             <el-form-item label="¿Para quien es la cita?">
-              <el-select v-model="selectedTipoCita" placeholder="Especialista" style="width: 100%">
+              <el-select v-model="formAgendarCita.bTipoCita" placeholder="Especialista" style="width: 100%">
                 <el-option v-for="item in tipoCitas" :key="item.id" :label="item.name" :value="item.id" />
               </el-select>
             </el-form-item>
@@ -89,7 +89,7 @@
             <el-form-item>
               <el-input v-model="formAgendarCita.sEmail" placeholder="Email" type="email" />
             </el-form-item>
-            <el-card v-if="selectedTipoCita === 1">
+            <el-card v-if="formAgendarCita.bTipoCita === 1">
               <el-collapse>
                 <el-collapse-item title="Campos adicionales">
                   <el-form-item label="Nombre">
@@ -183,7 +183,6 @@ let formAgendarCita = ref({
   nScndCuestionario: 0,
   sComentario: ''
 });
-let selectedTipoCita = ref({});
 let tipoCitas = ref([
   {name: 'Para mi', id: 0},
   {name: 'Para otra persona', id: 1}
