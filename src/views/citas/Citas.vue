@@ -59,19 +59,84 @@
           </template>
         </dataTable>
       </el-card>
+      <!--DRAWER AGENDAR CITA-->
       <el-drawer v-model="drawerAgendarCita" direction="rtl">
         <template #header>
           <h3>Agendar Cita</h3>
         </template>
         <template #default>
+          <el-form :label="formAgendarCita" :label-position="'top'">
+            <el-form-item label="¿Para quien es la cita?">
+              <el-select v-model="selectedTipoCita" placeholder="Especialista" style="width: 100%">
+                <el-option v-for="item in tipoCitas" :key="item.id" :label="item.name" :value="item.id" />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="Motivo de la visita">
+              <el-input v-model="formAgendarCita.sMotivoVisita" placeholder="Motivo de visita" disabled />
+            </el-form-item>
+            <el-form-item label="Aseguradora">
+              <el-input v-model="formAgendarCita.sAseguradora" placeholder="Aseguradora" disabled />
+            </el-form-item>
+            <el-form-item label="Informacion paciente">
+              <el-input v-model="formAgendarCita.sNombrePersonalPaciente" placeholder="Nombre" />
+            </el-form-item>
+            <el-form-item>
+              <el-input v-model="formAgendarCita.sApellidoPersonalPaciente" placeholder="Apellido" />
+            </el-form-item>
+            <el-form-item label="Informacion contacto">
+              <el-input v-model="formAgendarCita.sNumeroCelContacto" placeholder="Numero de celular" />
+            </el-form-item>
+            <el-form-item>
+              <el-input v-model="formAgendarCita.sEmail" placeholder="Email" type="email" />
+            </el-form-item>
+            <el-card v-if="selectedTipoCita === 1">
+              <el-collapse>
+                <el-collapse-item title="Campos adicionales">
+                  <el-form-item label="Nombre">
+                    <el-input v-model="formAgendarCita.sNombrePersonalContacto" placeholder="Nombre" />
+                  </el-form-item>
+                  <el-form-item label="Apellidos">
+                    <el-input v-model="formAgendarCita.sApellidoPersonalContacto" placeholder="Apellidos" />
+                  </el-form-item>
+                </el-collapse-item>
+              </el-collapse>
+            </el-card>
+            <el-form-item label="¿Tienes fiebre, tos, falta de aire o dificultad para respirar, o has estado en contacto con alguien que pueda presentar alguno de estos síntomas?" class="mt-3">
+              <el-radio-group v-model="formAgendarCita.nFrstCuestionario">
+                <el-radio :label="1">Si</el-radio>
+                <el-radio :label="2">No</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="¿Es tu primera visita con este especialista?">
+              <el-radio-group v-model="formAgendarCita.nScndCuestionario">
+                <el-radio :label="1">Si</el-radio>
+                <el-radio :label="2">No</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="Comentario">
+              <el-input v-model="formAgendarCita.sComentario" type="textarea" />
+            </el-form-item>
+            <el-button class="mdi mdi-content-save" @click="dialogAgregarCita = true" type="primary" />
+          </el-form>
         </template>
       </el-drawer>
+      <!--DIALOG AGENDAR CITA-->
+      <el-dialog v-model="dialogAgregarCita" title="Atención" width="30" align-center :show-close="false">
+        <span>¿Estas seguro de agendar la cita?</span>
+        <template #footer>
+          <span>
+            <el-button @click="dialogAgregarCita = false">Cancelar</el-button>
+            <el-button type="primary" @click="dialogAgregarCita = false; drawerAgendarCita = false; successMessage('Se ha agendado la cita')">Agregar</el-button>
+          </span>
+        </template>
+      </el-dialog>
     </el-col>
   </el-row>
 </template>
 
 <script lang="ts" async setup>
 import {ref} from 'vue';
+import {ElMessage} from "element-plus";
 
 let selectedSpecialist = ref({})
 let especialistas = ref([
@@ -104,6 +169,35 @@ let horariosHeader = [
 
 let drawerAgendarCita = ref(false);
 
+let formAgendarCita = ref({
+  bTipoCita: 0,
+  sMotivoVisita: 'Fisioterapia $400',
+  sAseguradora: 'Visita privada',
+  sNombrePersonalPaciente: '',
+  sApellidoPersonalPaciente: '',
+  sNombrePersonalContacto: '',
+  sApellidoPersonalContacto: '',
+  sNumeroCelContacto: '',
+  sEmail: '',
+  nFrstCuestionario: 0,
+  nScndCuestionario: 0,
+  sComentario: ''
+});
+let selectedTipoCita = ref({});
+let tipoCitas = ref([
+  {name: 'Para mi', id: 0},
+  {name: 'Para otra persona', id: 1}
+]);
+
+let dialogAgregarCita = ref(false);
+
+function successMessage(message: string) {
+  ElMessage({
+    showClose: true,
+    message: message,
+    type: 'success'
+  });
+}
 </script>
 
 <style scoped>
